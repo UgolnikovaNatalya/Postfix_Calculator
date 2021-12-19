@@ -9,6 +9,8 @@ import java.io.File
 import java.lang.IndexOutOfBoundsException
 import java.util.*
 import kotlin.math.*
+import kotlin.time.ExperimentalTime
+import kotlin.time.measureTime
 
 /**
  * Данная программа является утилитой для калькулятора на базе ОС Windows.
@@ -36,6 +38,7 @@ class MainView : View("Калькулятор") {
     private var resultText = SimpleStringProperty()
     private var resultText2 = SimpleStringProperty()
 
+    @OptIn(ExperimentalTime::class)
     override val root = vbox {
 
         alignment = Pos.CENTER
@@ -52,8 +55,8 @@ class MainView : View("Калькулятор") {
                 val openedFile = openFile()
                 if (openedFile != null) {
                     parseLine(openedFile)
-//                    val time = measureTime { parseLine(openedFile) }
-//                    println("Time: $time")
+                    val time = measureTime { parseLine(openedFile) }
+                    println("Time: $time")
                 }
             }
         }
@@ -128,7 +131,12 @@ class MainView : View("Калькулятор") {
         } catch (e: NullPointerException) {
             resultText2.set("Ошибка в файле!")
             throw Exception("")
+        } catch (e: EmptyStackException) {
+            resultText2.set("Ошибка в файле!")
+        } catch (e: Exception){
+            resultText2.set("Ошибка в файле!")
         }
+
         resultText.set(str)
         return result
 
@@ -178,8 +186,7 @@ class MainView : View("Калькулятор") {
                 }
             }
 
-        } catch (e: EmptyStackException) {
-            resultText2.set("Ошибка в файле!")
+        } catch (e: java.lang.Exception) {
             throw Exception("")
         }
         return stack.pop()
